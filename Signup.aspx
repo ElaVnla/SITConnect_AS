@@ -81,7 +81,7 @@
 
                         </div>
                         <div class="form-group mb-4">
-                            <asp:TextBox required="true" ID="creditcard" MaxLength="16" CssClass="form-control border-0 shadow form-control-lg text-base" placeholder="Credit Card Info" runat="server"></asp:TextBox>
+                            <asp:TextBox required="true" ID="creditcard" MaxLength="16" TextMode="Number" CssClass="form-control border-0 shadow form-control-lg text-base" placeholder="Credit Card Info" runat="server"></asp:TextBox>
 
                         </div>
                         <div class="form-group mb-4">
@@ -114,10 +114,10 @@
                         </div>
                         <script>
 
-                        </script>
+</script>
                         <div class="form-group mb-4">
                             <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-                            <asp:Label ID="lblMessage" runat="server" EnableViewState="false">Check if you're a robot</asp:Label>
+                            <asp:Label ID="lblMessage" runat="server"></asp:Label>
                         </div>
                         <asp:Button ID="Button1" OnClick="Button1_Click" Text="Sign up" CssClass="btn btn-primary" Height="50px" Width="400px" runat="server" />
                     </div>

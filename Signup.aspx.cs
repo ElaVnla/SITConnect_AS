@@ -78,7 +78,7 @@ namespace As200537F
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            System.Diagnostics.Debug.WriteLine("signup page loads");
         }
         protected void tb_passwword_TextChanged(object sender, EventArgs e)
         {
@@ -127,12 +127,12 @@ namespace As200537F
         {
             if (ValidateCaptcha())
             {
+                System.Diagnostics.Debug.WriteLine("captcha validation successful");
                 StartUpLoad();
             }
             else
             {
-                lblMessage.Text = "Validate captcha to prove that your are a human.";
-                lblMessage.ForeColor = Color.Red;
+                Response.Redirect("404.aspx", false);
             }
         }
 
@@ -169,61 +169,77 @@ namespace As200537F
             else
             {
                 lbl_pwdchecker.ForeColor = Color.Green;
-                //get the file name of the posted image  
-                string imgName = FileUpload1.FileName;
-                //sets the image path  
-                string imgPath = "ImageStorage/" + imgName;
-                //get the size in bytes that  
 
-                int imgSize = FileUpload1.PostedFile.ContentLength;
-
-                //validates the posted file before saving  
-                if (FileUpload1.PostedFile != null && FileUpload1.PostedFile.FileName != "")
+                if (CheckExistingEmail(email.Text.Trim()))
                 {
-                    // 10240 KB means 10MB, You can change the value based on your requirement  
-                    if (FileUpload1.PostedFile.ContentLength > 500000)
-                    {
-                        uploadchecker.Text = "File size too big";
-                        uploadchecker.ForeColor = Color.Red;
-                        /*                        Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('File is too big.')", true);
-                        */
-                    }
-                    else
-                    {
-                        //then save it to the Folder  
-                        FileUpload1.SaveAs(Server.MapPath(imgPath));
-                        Image1.ImageUrl = "~/" + imgPath;
-                        //Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Image saved!')", true);
-
-
-                        // password hashing
-                        string pwd = tb_password.Text.ToString().Trim();
-                        //Generate random "salt"
-                        RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-                        byte[] saltByte = new byte[8];
-                        //Fills array of bytes with a cryptographically strong sequence of random values.
-                        rng.GetBytes(saltByte);
-                        salt = Convert.ToBase64String(saltByte);
-                        SHA512Managed hashing = new SHA512Managed();
-                        string pwdWithSalt = pwd + salt;
-                        byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwd));
-                        byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
-                        finalHash = Convert.ToBase64String(hashWithSalt);
-                        RijndaelManaged cipher = new RijndaelManaged();
-                        cipher.GenerateKey();
-                        Key = cipher.Key;
-                        IV = cipher.IV;
-                        if (createAccount(imgPath))
-                        {
-                            Response.Redirect("Login.aspx");
-                        }
-                    }
-
+                    lblMessage.Text = "Email is already in use. Please use another email";
+                    lblMessage.ForeColor = Color.Red;
                 }
                 else
                 {
-                    uploadchecker.Text = "Please upload an image";
-                    uploadchecker.ForeColor = Color.Red;
+                    //get the file name of the posted image  
+                    string imgName = FileUpload1.FileName;
+                    //sets the image path  
+                    string imgPath = "ImageStorage/" + imgName;
+                    //get the size in bytes that  
+
+                    int imgSize = FileUpload1.PostedFile.ContentLength;
+
+                    //validates the posted file before saving  
+                    if (FileUpload1.PostedFile != null && FileUpload1.PostedFile.FileName != "")
+                    {
+                        // 10240 KB means 10MB, You can change the value based on your requirement  
+                        if (FileUpload1.PostedFile.ContentLength > 500000)
+                        {
+                            System.Diagnostics.Debug.WriteLine("File size too big");
+                            uploadchecker.Text = "File size too big";
+                            uploadchecker.ForeColor = Color.Red;
+                            /*                        Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('File is too big.')", true);
+                            */
+                        }
+                        else
+                        {
+                            //then save it to the Folder  
+                            FileUpload1.SaveAs(Server.MapPath(imgPath));
+                            Image1.ImageUrl = "~/" + imgPath;
+                            //Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Image saved!')", true);
+
+
+                            // password hashing
+                            string pwd = tb_password.Text.ToString().Trim();
+                            //Generate random "salt"
+                            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                            byte[] saltByte = new byte[8];
+                            //Fills array of bytes with a cryptographically strong sequence of random values.
+                            rng.GetBytes(saltByte);
+                            salt = Convert.ToBase64String(saltByte);
+                            SHA512Managed hashing = new SHA512Managed();
+                            string pwdWithSalt = pwd + salt;
+                            byte[] plainHash = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwd));
+                            byte[] hashWithSalt = hashing.ComputeHash(Encoding.UTF8.GetBytes(pwdWithSalt));
+                            finalHash = Convert.ToBase64String(hashWithSalt);
+                            RijndaelManaged cipher = new RijndaelManaged();
+                            cipher.GenerateKey();
+                            Key = cipher.Key;
+                            IV = cipher.IV;
+                            if (createAccount(imgPath))
+                            {
+                                Response.Redirect("Login.aspx");
+                            }
+                            else
+                            {
+                                Response.Redirect("404.aspx", false);
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("Upload image fails");
+                        uploadchecker.Text = "Please upload an image";
+                        uploadchecker.ForeColor = Color.Red;
+                    }
                 }
             }
         }
@@ -259,7 +275,8 @@ namespace As200537F
                             }
                             catch (SqlException ex)
                             {
-                                lblMessage.Text = ex.ToString();
+                                //lblMessage.Text = ex.ToString();
+                                System.Diagnostics.Debug.WriteLine(ex.ToString());
                                 return false;
                             }
                         }
@@ -268,7 +285,9 @@ namespace As200537F
 
             }
             catch (Exception ex)
-            {
+            {/*
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Response.Redirect("404.aspx", false);*/
                 throw new Exception(ex.ToString());
             }
         }
@@ -289,10 +308,54 @@ namespace As200537F
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
                 throw new Exception(ex.ToString());
             }
             finally { }
             return cipherText;
+        }
+
+        protected bool CheckExistingEmail(string email)
+        {
+            SqlConnection connection = new SqlConnection(MYDBConnectionString);
+            string sql = "select email FROM Account";
+            SqlCommand command = new SqlCommand(sql, connection);
+            try
+            {
+                connection.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["email"] != DBNull.Value)
+                        {
+                            if (email == reader["email"].ToString())
+                            {
+                                System.Diagnostics.Debug.WriteLine("Email already exist");
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }//try
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return false;
         }
     }
 }

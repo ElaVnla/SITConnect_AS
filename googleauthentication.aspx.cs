@@ -107,7 +107,9 @@ namespace As200537F
                                 }
                                 catch (SqlException ex)
                                 {
-                                    lblResult.Text = ex.ToString();
+                                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                                    Response.Redirect("404.aspx", false);
+                                    //lblResult.Text = ex.ToString();
                                 }
                             }
                         }
@@ -116,7 +118,9 @@ namespace As200537F
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.ToString());
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    Response.Redirect("404.aspx", false);
+                    //throw new Exception(ex.ToString());
                 }
                 lblResult.Visible = true;
                 lblResult.Text = "Code Successfully Verified. You can now Log In with Google Authentication";

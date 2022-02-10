@@ -68,7 +68,7 @@
             <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server"
                 ControlToValidate="txt_ccpassword"
                 ErrorMessage="Please enter Confirm  password"></asp:RequiredFieldValidator>
-            <asp:Label ID="uploadchecker" runat="server"></asp:Label>
+            <asp:Label ID="lbl_pwdchecker" runat="server"></asp:Label>
 
             <asp:CompareValidator ID="CompareValidator1" runat="server"
                 ControlToCompare="txt_npassword" ControlToValidate="txt_ccpassword"
