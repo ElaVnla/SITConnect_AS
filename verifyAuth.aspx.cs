@@ -63,7 +63,7 @@ namespace As200537F
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
             string sql = "select * FROM Account WHERE Email=@USERID";
             SqlCommand command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@USERID", (string)Session["userID"]);
+            command.Parameters.AddWithValue("@USERID", (string)Session["UserID"]);
             try
             {
                 connection.Open();

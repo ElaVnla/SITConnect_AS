@@ -121,6 +121,7 @@ namespace As200537F
         {
             if (ValidateCaptcha())
             {
+                System.Diagnostics.Debug.WriteLine("Captcha validation successful");
                 int scores = checkPassword(txt_npassword.Text);
                 string status = "";
                 switch (scores)
@@ -143,10 +144,10 @@ namespace As200537F
                     default:
                         break;
                 }
-                uploadchecker.Text = "Status : " + status;
+                lbl_pwdchecker.Text = "Status : " + status;
                 if (scores < 4)
                 {
-                    uploadchecker.ForeColor = Color.Red;
+                    lbl_pwdchecker.ForeColor = Color.Red;
                     return;
                 }
                 else
@@ -215,7 +216,9 @@ namespace As200537F
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.ToString());
+                        System.Diagnostics.Debug.WriteLine(ex.ToString());
+                        Response.Redirect("404.aspx", false);
+                        //throw new Exception(ex.ToString());
                     }
                     finally { }
                 }
@@ -223,8 +226,7 @@ namespace As200537F
             }
             else
             {
-                lblMessage.Text = "Validate captcha to prove that your are a human.";
-                lblMessage.ForeColor = Color.Red;
+                Response.Redirect("404.aspx", false);
             }
         }
         protected bool changepwd()

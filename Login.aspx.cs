@@ -77,6 +77,8 @@ namespace As200537F
         {
             if (ValidateCaptcha())
             {
+                System.Diagnostics.Debug.WriteLine("captcha validation successful");
+
                 string email = HttpUtility.HtmlEncode(emailUser.Text.ToString().Trim());
                 string pwd = HttpUtility.HtmlEncode(passworduser.Text.ToString().Trim());
                 SHA512Managed hashing = new SHA512Managed();
@@ -103,15 +105,20 @@ namespace As200537F
 
                             if (result == "true")
                             {
+                                System.Diagnostics.Debug.WriteLine("User has 2fa enabled");
                                 Response.Redirect("verifyAuth.aspx", false);
                             }
                             else if (result == "false")
                             {
+                                System.Diagnostics.Debug.WriteLine("User does not have 2fa enabled");
+
                                 Response.Redirect("ProfilePage.aspx", false);
 
                             }
                             else
                             {
+                                System.Diagnostics.Debug.WriteLine("cleaering sessions and auth token");
+
                                 Session.Clear();
                                 Session.Abandon();
                                 Session.RemoveAll();
@@ -141,14 +148,17 @@ namespace As200537F
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.ToString());
-                }
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                    Response.Redirect("404.aspx", false);
+/*                    throw new Exception(ex.ToString());
+*/                }
                 finally { }
             }
             else
             {
-                lblMessage.Text = "Validate captcha to prove that your are a human.";
-                lblMessage.ForeColor = Color.Red;
+                System.Diagnostics.Debug.WriteLine("captcha validation failed");
+                Response.Redirect("404.aspx", false);
+
             }
 
         }

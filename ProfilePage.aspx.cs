@@ -29,7 +29,7 @@ namespace As200537F
                 }
                 else
                 {
-                    userID = (string)Session["userID"];
+                    userID = (string)Session["UserID"];
                     displayUserProfile(userID);
                 }
             }
@@ -90,7 +90,9 @@ namespace As200537F
             }//try
             catch (Exception ex)
             {
-                throw new Exception(ex.ToString());
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Response.Redirect("404.aspx", false);
+                //throw new Exception(ex.ToString());
             }
             finally
             {
