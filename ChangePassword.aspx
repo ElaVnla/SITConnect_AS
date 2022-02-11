@@ -57,7 +57,7 @@
                 Font-Bold="True" ForeColor="#996633"></asp:Label>
             <asp:TextBox ID="txt_npassword" runat="server" TextMode="Password" onkeyup="javascript:validate()"></asp:TextBox>
             <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                ControlToValidate="txt_npassword" ErrorMessage="Please enter New password" onkeyup="javascript:validate()"></asp:RequiredFieldValidator>
+                ControlToValidate="txt_npassword" ErrorMessage="Please enter New password"></asp:RequiredFieldValidator>
             <br />
 
             <asp:Label ID="Label3" runat="server" Text="Confirm password" Width="120px"
@@ -77,7 +77,7 @@
         <asp:Button ID="btn_update" runat="server" Font-Bold="True" BackColor="#CCFF99" OnClick="btn_update_Click" Text="Update" />
         <asp:Label ID="lbl_msg" Font-Bold="True" BackColor="#FFFF66" ForeColor="#FF3300" runat="server" Text=""></asp:Label><br />
         <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response" />
-        <asp:Label ID="lblMessage" runat="server" EnableViewState="false">Check if you're a robot</asp:Label>
+        <asp:Label ID="lblMessage" runat="server" EnableViewState="false"></asp:Label>
     </form>
     <script>
         grecaptcha.ready(function () {
@@ -87,5 +87,7 @@
         });
 
     </script>
+    <a href="ProfilePage.aspx" type="button" class="btn btn-primary" height="50px" width="100px">Go Back</a>
+
 </body>
 </html>

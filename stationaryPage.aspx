@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>SQL InJection</title>
+    <title>Statioary</title>
 </head>
 <body>
     <form id="form1" runat="server">
@@ -12,7 +12,7 @@
             <table>
                 <tr>
                     <td colspan="2">
-                        <h2>SQL Injection Demo</h2>
+                        <h2>Stationaries we are selling now!</h2>
                     </td>
                 </tr>
                 <tr>
@@ -27,14 +27,16 @@
                 </tr>
                 <tr>
                     <asp:GridView ID="gvUserInfo" Width="100%"
-                        runat="server" DataKeyNames="userID" AutoGenerateColumns="false">
+                        runat="server" DataKeyNames="stationaryID" AutoGenerateColumns="false">
                         <Columns>
-                            <asp:BoundField DataField="userID" HeaderText="userID" />
+                            <asp:BoundField DataField="stationaryID" HeaderText="stationaryID" />
                             <asp:BoundField DataField="name" HeaderText="name" />
-                            <asp:BoundField DataField="email" HeaderText="email" />
-                            <asp:HyperLinkField DataNavigateUrlFields="userID"
-                                DataNavigateUrlFormatString="viewuser.aspx?userid={0}"
-                                Text="View User" HeaderText="action" />
+                            <asp:BoundField DataField="brand" HeaderText="brand" />
+                            <asp:BoundField DataField="price" HeaderText="price" />
+
+                            <asp:HyperLinkField DataNavigateUrlFields="stationaryID"
+                                DataNavigateUrlFormatString="viewuser.aspx?stationaryid={0}"
+                                Text="Buy Now" HeaderText="action" />
                         </Columns>
                     </asp:GridView>
                 </tr>
@@ -43,5 +45,7 @@
                 <asp:Label ID="Label1" runat="server" ForeColor="Red"></asp:Label></center>
         </div>
     </form>
+    <a href="ProfilePage.aspx" type="button" class="btn btn-primary" height="50px" width="100px">Go Back</a>
+
 </body>
 </html>

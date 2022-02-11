@@ -70,5 +70,7 @@
             </div>
         </div>
     </form>
+        <a href="ProfilePage.aspx" type="button" class="btn btn-primary" height="50px" width="100px">Go Back</a>
+
 </body>
 </html>

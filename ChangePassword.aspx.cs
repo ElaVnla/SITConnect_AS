@@ -144,7 +144,7 @@ namespace As200537F
                     default:
                         break;
                 }
-                lbl_pwdchecker.Text = "Status : " + status;
+                //lbl_pwdchecker.Text = "Status : " + status;
                 if (scores < 4)
                 {
                     lbl_pwdchecker.ForeColor = Color.Red;
