@@ -32,7 +32,7 @@ namespace As200537F
                         {
                             conn.Open();
                             SqlDataAdapter adapter = new SqlDataAdapter();
-                            SqlCommand cmd = new SqlCommand("SELECT userID, name, email FROM user_info", conn);
+                            SqlCommand cmd = new SqlCommand("SELECT stationaryID, name, brand, price FROM Stationary", conn);
                             cmd.CommandType = CommandType.Text;
                             adapter.SelectCommand = cmd;
                             adapter.Fill(dset);
@@ -62,7 +62,7 @@ namespace As200537F
                     {
                         conn.Open();
                         SqlDataAdapter adapter = new SqlDataAdapter();
-                        string sqlQuery = string.Format("SELECT userID,name, email FROM user_info WHERE userID =@0", txtUserID.Text);
+                        string sqlQuery = string.Format("SELECT stationaryID, name, brand, price FROM Stationary WHERE stationaryID =@0", txtUserID.Text);
                         SqlCommand cmd = new SqlCommand(sqlQuery, conn);
                         cmd.CommandType = CommandType.Text;
                         cmd.Parameters.AddWithValue("@0", txtUserID.Text);

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="As200537F.Login" validateRequest="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Login.aspx.cs" Inherits="As200537F.Login" ValidateRequest="false" %>
 
 <!DOCTYPE html>
 
@@ -21,7 +21,8 @@
                         </div>
                     </div>
                     <div class="col-lg-5 px-lg-4">
-                        <h1 class="text-base text-primary text-uppercase mb-4">Login Here</h1>
+                        <a href="Signup.aspx" class="text-base text-primary text-uppercase mb-4" height="50px" width="100px">Signup Here</a>
+
                         <h2 class="mb-4">Welcome Back!</h2>
                         <div class="col">
                             <asp:Label ID="errormsg" runat="server"></asp:Label>

@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div class="col-lg-5 px-lg-4">
-                        <h1 class="text-base text-primary text-uppercase mb-4">Sign up Here</h1>
+                                                <a href="Login.aspx" class="text-base text-primary text-uppercase mb-4" height="50px" width="100px">Login Here</a>
                         <h2 class="mb-4">Welcome!</h2>
 
                         <div class="form-group mb-4">
