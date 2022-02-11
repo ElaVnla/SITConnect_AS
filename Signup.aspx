@@ -44,6 +44,7 @@
             return ("no_special_characters");
         }
 
+
         document.getElementById("lbl_pwdchecker").innerHTML = "Excellent!"
         document.getElementById("lbl_pwdchecker").style.color = "Blue";
     }
