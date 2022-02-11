@@ -254,7 +254,7 @@ namespace As200537F
                             }
                             catch (SqlException ex)
                             {
-                                lblMessage.Text = ex.ToString();
+                                //lblMessage.Text = ex.ToString();
                                 return false;
                             }
                         }
