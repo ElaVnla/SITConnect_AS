@@ -64,10 +64,17 @@ namespace As200537F
                     {
                         lblResult.Text = String.Empty;
                         lblResult.Visible = false;
-                        GenerateTwoFactorAuthentication();
-                        imgQrCode.ImageUrl = AuthenticationBarCodeImage;
-                        lblManualSetupCode.Text = AuthenticationManualCode;
-                        lblAccountName.Text = AuthenticationTitle;
+                        if (GenerateTwoFactorAuthentication())
+                        {
+                            imgQrCode.ImageUrl = AuthenticationBarCodeImage;
+                            lblManualSetupCode.Text = AuthenticationManualCode;
+                            lblAccountName.Text = AuthenticationTitle;
+                        }
+                        else
+                        {
+                            Response.Redirect("404.aspx", false);
+                        }
+
                     }
                 }
             }
@@ -132,13 +139,13 @@ namespace As200537F
             }
         }
 
-        public Boolean ValidateTwoFactorPIN(String pin)
+        public bool ValidateTwoFactorPIN(String pin)
         {
             TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
             return tfa.ValidateTwoFactorPIN(AuthenticationCode, pin);
         }
 
-        public Boolean GenerateTwoFactorAuthentication()
+        public bool GenerateTwoFactorAuthentication()
         {
             Guid guid = Guid.NewGuid();
             String uniqueUserKey = Convert.ToString(guid).Replace("-", "").Substring(0, 10);
