@@ -29,13 +29,13 @@ namespace As200537F
                 Response.Redirect("Login.aspx", false);
             }
         }
-        public Boolean ValidateTwoFactorPIN(String pin)
+        public Boolean validate2fa(String pin)
         {
-            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-            var result = getAuthCode();
-            if (result != "error")
+            TwoFactorAuthenticator twofacauth = new TwoFactorAuthenticator();
+            var resultcode = getAuthCode();
+            if (resultcode != "error")
             {
-                return tfa.ValidateTwoFactorPIN(result, pin);
+                return twofacauth.ValidateTwoFactorPIN(resultcode, pin);
 
             }
             else
@@ -43,10 +43,10 @@ namespace As200537F
                 return false;
             }
         }
-        protected void btnValidate_Click(object sender, EventArgs e)
+        protected void validatebutton(object sender, EventArgs e)
         {
             String pin = txtSecurityCode.Text.Trim();
-            Boolean status = ValidateTwoFactorPIN(pin);
+            Boolean status = validate2fa(pin);
             if (status)
             {
                 Response.Redirect("ProfilePage.aspx", false);

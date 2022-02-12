@@ -12,49 +12,59 @@ namespace As200537F
 {
     public partial class googleauthentication : System.Web.UI.Page
     {
+        // declaring varaiables
+        // for database
         string MYDBConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
 
-        String AuthenticationCode
+        // for google authentication
+        String AuthCode
         {
             get
             {
-                if (ViewState["AuthenticationCode"] != null)
-                    return ViewState["AuthenticationCode"].ToString().Trim();
+                if (ViewState["AuthCode"] != null)
+                    return ViewState["AuthCode"].ToString().Trim();
                 return String.Empty;
             }
             set
             {
-                ViewState["AuthenticationCode"] = value.Trim();
+                ViewState["AuthCode"] = value.Trim();
             }
         }
 
-        String AuthenticationTitle
+        String AuthTitle
         {
             get
             {
+                // use user email as the authentication title
                 return (string)Session["UserID"];
             }
         }
 
 
-        String AuthenticationBarCodeImage
+        String AuthBarCodeImage
         {
             get;
             set;
         }
 
-        String AuthenticationManualCode
+        String AuthManualCode
         {
             get;
             set;
+
+
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("google authentication loading.....");
+
             if (Session["UserID"] != null && Session["AuthToken"] != null && Request.Cookies["AuthToken"] != null)
             {
                 if (!Session["AuthToken"].ToString().Equals(Request.Cookies["AuthToken"].Value))
                 {
+                    System.Diagnostics.Debug.WriteLine("User account does not exist. Unable to access");
+
                     Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Restricted access. Please login!!')", true);
                     Response.Redirect("Login.aspx", false);
                 }
@@ -62,16 +72,19 @@ namespace As200537F
                 {
                     if (!Page.IsPostBack)
                     {
-                        lblResult.Text = String.Empty;
-                        lblResult.Visible = false;
-                        if (GenerateTwoFactorAuthentication())
+                        // display result and qr code
+                        resultlabel.Text = String.Empty;
+                        resultlabel.Visible = false;
+                        if (Generate2fa())
                         {
-                            imgQrCode.ImageUrl = AuthenticationBarCodeImage;
-                            lblManualSetupCode.Text = AuthenticationManualCode;
-                            lblAccountName.Text = AuthenticationTitle;
+                            qrcodeimage.ImageUrl = AuthBarCodeImage;
+                            mansetupcode.Text = AuthManualCode;
+                            accname.Text = AuthTitle;
                         }
                         else
                         {
+                            System.Diagnostics.Debug.WriteLine("an error occured when generating the two factor authentication.");
+
                             Response.Redirect("404.aspx", false);
                         }
 
@@ -80,43 +93,47 @@ namespace As200537F
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("User account does not exist. Unable to access");
+
                 Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Restricted access. Please login!!')", true);
                 Response.Redirect("Login.aspx", false);
             }
 
         }
 
-        protected void btnValidate_Click(object sender, EventArgs e)
+        protected void btnsubmitvalidate(object sender, EventArgs e)
         {
-            String pin = txtSecurityCode.Text.Trim();
-            Boolean status = ValidateTwoFactorPIN(pin);
-            if (status)
+            System.Diagnostics.Debug.WriteLine("Validating verification code");
+
+            String pinnumber = authsecuritycode.Text.Trim();
+            Boolean statusofpin = ValidateTwoFactorPIN(pinnumber);
+            if (statusofpin)
             {
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(MYDBConnectionString))
+                    using (SqlConnection connectionString = new SqlConnection(MYDBConnectionString))
                     {
-                        using (SqlCommand cmd = new SqlCommand("UPDATE Account SET [EnableAuth]=@enableauth,[AuthCode]=@authcode WHERE email='" + (string)Session["UserID"] + "'"))
+                        using (SqlCommand cmdstatement = new SqlCommand("UPDATE Account SET [EnableAuth]=@enableauth,[AuthCode]=@authcode WHERE email='" + (string)Session["UserID"] + "'"))
                         {
                             using (SqlDataAdapter sda = new SqlDataAdapter())
                             {
                                 try
                                 {
-                                    cmd.CommandType = CommandType.Text;
-                                    cmd.Parameters.AddWithValue("@enableauth", "true");
-                                    cmd.Parameters.AddWithValue("@authcode", AuthenticationCode);
+                                    cmdstatement.CommandType = CommandType.Text;
+                                    cmdstatement.Parameters.AddWithValue("@enableauth", "true");
+                                    cmdstatement.Parameters.AddWithValue("@authcode", AuthCode);
                                     /*cmd.Parameters.AddWithValue("@iv", Convert.ToBase64String(IV));
                                     cmd.Parameters.AddWithValue("@keyy", Convert.ToBase64String(Key));*/
-                                    cmd.Connection = con;
-                                    con.Open();
-                                    cmd.ExecuteNonQuery();
-                                    con.Close();
+                                    cmdstatement.Connection = connectionString;
+                                    connectionString.Open();
+                                    cmdstatement.ExecuteNonQuery();
+                                    connectionString.Close();
                                 }
                                 catch (SqlException ex)
                                 {
                                     System.Diagnostics.Debug.WriteLine(ex.ToString());
                                     Response.Redirect("404.aspx", false);
-                                    //lblResult.Text = ex.ToString();
+                                    //resultlabel.Text = ex.ToString();
                                 }
                             }
                         }
@@ -129,35 +146,35 @@ namespace As200537F
                     Response.Redirect("404.aspx", false);
                     //throw new Exception(ex.ToString());
                 }
-                lblResult.Visible = true;
-                lblResult.Text = "Code Successfully Verified. You can now Log In with Google Authentication";
+                resultlabel.Visible = true;
+                resultlabel.Text = "Code Successfully Verified. You can now Log In with Google Authentication";
             }
             else
             {
-                lblResult.Visible = true;
-                lblResult.Text = "Invalid Code.";
+                resultlabel.Visible = true;
+                resultlabel.Text = "Invalid Code. Please try again.";
             }
         }
 
         public bool ValidateTwoFactorPIN(String pin)
         {
-            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-            return tfa.ValidateTwoFactorPIN(AuthenticationCode, pin);
+            TwoFactorAuthenticator twofacauth = new TwoFactorAuthenticator();
+            return twofacauth.ValidateTwoFactorPIN(AuthCode, pin);
         }
 
-        public bool GenerateTwoFactorAuthentication()
+        public bool Generate2fa()
         {
             Guid guid = Guid.NewGuid();
-            String uniqueUserKey = Convert.ToString(guid).Replace("-", "").Substring(0, 10);
-            AuthenticationCode = uniqueUserKey;
+            String uniqueSITUserKey = Convert.ToString(guid).Replace("-", "").Substring(0, 10);
+            AuthCode = uniqueSITUserKey;
 
             Dictionary<String, String> result = new Dictionary<String, String>();
-            TwoFactorAuthenticator tfa = new TwoFactorAuthenticator();
-            var setupInfo = tfa.GenerateSetupCode("Complio", AuthenticationTitle, AuthenticationCode, false, 300);
-            if (setupInfo != null)
+            TwoFactorAuthenticator twofacauth = new TwoFactorAuthenticator();
+            var setupInformation = twofacauth.GenerateSetupCode("SITConnect Account", AuthTitle, AuthCode, false, 300);
+            if (setupInformation != null)
             {
-                AuthenticationBarCodeImage = setupInfo.QrCodeSetupImageUrl;
-                AuthenticationManualCode = setupInfo.ManualEntryKey;
+                AuthBarCodeImage = setupInformation.QrCodeSetupImageUrl;
+                AuthManualCode = setupInformation.ManualEntryKey;
                 return true;
             }
             return false;

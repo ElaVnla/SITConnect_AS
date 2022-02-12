@@ -17,7 +17,7 @@
                             <asp:TextBox runat="server" Width="300px" CssClass="form-control" ID="txtSecurityCode" MaxLength="50" ToolTip="Please enter security code you get on your authenticator application">  
                             </asp:TextBox>
                         </div>
-                        <asp:Button ID="btnValidate" OnClick="btnValidate_Click" CssClass="btn btn-primary" runat="server" Text="Validate" />
+                        <asp:Button ID="btnValidate" OnClick="validatebutton" CssClass="btn btn-primary" runat="server" Text="Validate" />
                     </div>
                     <h3>Result:</h3>
                     <div class="alert alert-success col-md-12" runat="server" role="alert">

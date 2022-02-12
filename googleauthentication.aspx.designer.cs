@@ -24,40 +24,40 @@ namespace As200537F
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
 
         /// <summary>
-        /// imgQrCode control.
+        /// qrcodeimage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Image imgQrCode;
+        protected global::System.Web.UI.WebControls.Image qrcodeimage;
 
         /// <summary>
-        /// lblAccountName control.
+        /// accname control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblAccountName;
+        protected global::System.Web.UI.WebControls.Label accname;
 
         /// <summary>
-        /// lblManualSetupCode control.
+        /// mansetupcode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblManualSetupCode;
+        protected global::System.Web.UI.WebControls.Label mansetupcode;
 
         /// <summary>
-        /// txtSecurityCode control.
+        /// authsecuritycode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtSecurityCode;
+        protected global::System.Web.UI.WebControls.TextBox authsecuritycode;
 
         /// <summary>
         /// btnValidate control.
@@ -69,12 +69,12 @@ namespace As200537F
         protected global::System.Web.UI.WebControls.Button btnValidate;
 
         /// <summary>
-        /// lblResult control.
+        /// resultlabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblResult;
+        protected global::System.Web.UI.WebControls.Label resultlabel;
     }
 }
