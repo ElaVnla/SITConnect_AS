@@ -18,18 +18,29 @@ namespace As200537F
 {
     public partial class Signup : System.Web.UI.Page
     {
+        //declaring variables ----------------------------
+        // for database
         string MYDBConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
+        // for password
         static string finalHash;
         static string salt;
+        // for encryption/descryption of creditcard number
         byte[] Key;
         byte[] IV;
+
+        // declaring class --------------------------------
+        // class for captcha
         public class MyObject
         {
             public string success { get; set; }
             public List<string> ErrorMessage { get; set; }
         }
+
+        // void functions ----------------------------------
         public bool ValidateCaptcha()
         {
+            System.Diagnostics.Debug.WriteLine("Start of validation of Captcha......");
+
             bool result = true;
 
             //When user submits the recaptcha form, the user gets a response POST parameter. 
@@ -66,63 +77,30 @@ namespace As200537F
 
                     }
                 }
+                System.Diagnostics.Debug.WriteLine("End of validation of Captcha......");
 
                 return result;
             }
             catch (WebException ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error in Validation of Captcha -> " + ex.ToString());
                 throw ex;
             }
+
         }
-
-
+        // page function when Signup.aspx is launched
         protected void Page_Load(object sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("signup page loads");
+            System.Diagnostics.Debug.WriteLine("signup page starts loading......");
         }
+
+        // delcaring password 
         protected void tb_passwword_TextChanged(object sender, EventArgs e)
         {
 
         }
-        private int checkPassword(string password)
-        {
-            int score = 0;
 
-            // include your implementation here
-
-            //score 0 very weak;
-            // if length of password is less than 8 chars
-            if (password.Length < 8)
-            {
-                return 1;
-            }
-            else
-            {
-                score = 1;
-            }
-            // score 2 weak
-            if (Regex.IsMatch(password, "[a-z]"))
-            {
-                score++;
-            }
-            // score 3 medium
-            if (Regex.IsMatch(password, "[A-Z]"))
-            {
-                score++;
-            }
-            // score 4 strong
-            if (Regex.IsMatch(password, "[0-9]"))
-            {
-                score++;
-            }
-            // score 5 excellent
-            if (Regex.IsMatch(password, "(?=.*[^A-Za-z0-9])"))
-            {
-                score++;
-            }
-
-            return score;
-        }
+        // When user wishes to submit the registration form
         protected void Button1_Click(object sender, EventArgs e)
         {
             if (ValidateCaptcha())
@@ -132,14 +110,18 @@ namespace As200537F
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("captcha validation unsuccessful");
                 Response.Redirect("404.aspx", false);
             }
         }
-
         private void StartUpLoad()
         {
+            System.Diagnostics.Debug.WriteLine("-- Validation of registration form --");
+
             int scores = checkPassword(tb_password.Text);
             string status = "";
+            System.Diagnostics.Debug.WriteLine("validating password...");
+
             switch (scores)
             {
                 case 1:
@@ -160,23 +142,36 @@ namespace As200537F
                 default:
                     break;
             }
-            lbl_pwdchecker.Text = "Status : " + status;
+            //lbl_pwdchecker.Text = "Status : " + status;
+            System.Diagnostics.Debug.WriteLine("Status of Password: " + status);
+
             if (scores < 4)
             {
+                lbl_pwdchecker.Text = "Status of password : " + status;
                 lbl_pwdchecker.ForeColor = Color.Red;
                 return;
             }
             else
             {
+                System.Diagnostics.Debug.WriteLine("Password validation: Passed");
+
                 lbl_pwdchecker.ForeColor = Color.Green;
+
+                // validate email, email must be unique
+                System.Diagnostics.Debug.WriteLine("Validating email...");
 
                 if (CheckExistingEmail(email.Text.Trim()))
                 {
+                    System.Diagnostics.Debug.WriteLine("Email already exist");
+
                     lblMessage.Text = "Email is already in use. Please use another email";
                     lblMessage.ForeColor = Color.Red;
                 }
                 else
                 {
+                    System.Diagnostics.Debug.WriteLine("Email validation: Passed");
+                    System.Diagnostics.Debug.WriteLine("Validating profile image....");
+
                     //get the file name of the posted image  
                     string imgName = FileUpload1.FileName;
                     //sets the image path  
@@ -185,25 +180,29 @@ namespace As200537F
 
                     int imgSize = FileUpload1.PostedFile.ContentLength;
 
-                    //validates the posted file before saving  
+                    //validate image before saving 
                     if (FileUpload1.PostedFile != null && FileUpload1.PostedFile.FileName != "")
                     {
+                        System.Diagnostics.Debug.WriteLine("Image retrieve successfully...");
+
                         // 10240 KB means 10MB, You can change the value based on your requirement  
                         if (FileUpload1.PostedFile.ContentLength > 500000)
                         {
-                            System.Diagnostics.Debug.WriteLine("File size too big");
-                            uploadchecker.Text = "File size too big";
+                            System.Diagnostics.Debug.WriteLine("File size too big. Unable to save.");
+                            uploadchecker.Text = "File size too big. Please submit an image lesser than 500000Kb";
                             uploadchecker.ForeColor = Color.Red;
                             /*                        Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('File is too big.')", true);
                             */
                         }
                         else
                         {
-                            //then save it to the Folder  
+                            System.Diagnostics.Debug.WriteLine("Image size validation: Passed");
+                            //Saving to image profile folder
                             FileUpload1.SaveAs(Server.MapPath(imgPath));
                             Image1.ImageUrl = "~/" + imgPath;
                             //Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Image saved!')", true);
 
+                            System.Diagnostics.Debug.WriteLine("Hashing of Password.....");
 
                             // password hashing
                             string pwd = tb_password.Text.ToString().Trim();
@@ -222,12 +221,19 @@ namespace As200537F
                             cipher.GenerateKey();
                             Key = cipher.Key;
                             IV = cipher.IV;
+                            System.Diagnostics.Debug.WriteLine("Hashing Password: Complete");
+                            System.Diagnostics.Debug.WriteLine("Creating Account....");
+
                             if (createAccount(imgPath))
                             {
+                                System.Diagnostics.Debug.WriteLine("Creationg of Account: Complete");
+
                                 Response.Redirect("Login.aspx");
                             }
                             else
                             {
+                                System.Diagnostics.Debug.WriteLine("Failure in creation of Account");
+
                                 Response.Redirect("404.aspx", false);
 
                             }
@@ -243,8 +249,7 @@ namespace As200537F
                 }
             }
         }
-
-        
+        // bool functions ----------------------------------
         protected bool createAccount(string imgPath)
         {
             try
@@ -260,7 +265,6 @@ namespace As200537F
                                 cmd.CommandType = CommandType.Text;
                                 cmd.Parameters.AddWithValue("@firstname", HttpUtility.HtmlEncode(firstname.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@lastname", HttpUtility.HtmlEncode(lastname.Text.Trim()));
-                                //cmd.Parameters.AddWithValue("@Nric", encryptData(tb_nric.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@creditcard", Convert.ToBase64String(encryptData(HttpUtility.HtmlEncode(creditcard.Text.Trim().ToString()))));
                                 cmd.Parameters.AddWithValue("@email", HttpUtility.HtmlEncode(email.Text.Trim()));
                                 cmd.Parameters.AddWithValue("@DOB", HttpUtility.HtmlEncode(DOB.Text.Trim()));
@@ -294,11 +298,58 @@ namespace As200537F
             }
         }
 
+
+        protected bool CheckExistingEmail(string email)
+        {
+            SqlConnection connectionString = new SqlConnection(MYDBConnectionString);
+            string sqlStatement = "select email FROM Account";
+            SqlCommand command = new SqlCommand(sqlStatement, connectionString);
+            try
+            {
+                connectionString.Open();
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["email"] != DBNull.Value)
+                        {
+                            if (email == reader["email"].ToString())
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                throw new Exception(ex.ToString());
+            }
+            finally
+            {
+                connectionString.Close();
+            }
+            return false;
+        }
+
+        // byte function -----------------------------------
+        //encrypting items passed through in this function
         protected byte[] encryptData(string data)
         {
             byte[] cipherText = null;
             try
             {
+                System.Diagnostics.Debug.WriteLine("--- Start of Encryption ---");
+
                 RijndaelManaged cipher = new RijndaelManaged();
                 cipher.IV = IV;
                 cipher.Key = Key;
@@ -314,50 +365,59 @@ namespace As200537F
                 throw new Exception(ex.ToString());
             }
             finally { }
+            System.Diagnostics.Debug.WriteLine("--- End of Encryption ---");
             return cipherText;
         }
 
-        protected bool CheckExistingEmail(string email)
+        // int function ------------------------------------
+        // validation of password
+        private int checkPassword(string password)
         {
-            SqlConnection connection = new SqlConnection(MYDBConnectionString);
-            string sql = "select email FROM Account";
-            SqlCommand command = new SqlCommand(sql, connection);
-            try
+            int score = 0;
+
+            // include your implementation here
+
+            //score 0 very weak;
+            // if length of password is less than 8 chars
+            if (password.Length < 8)
             {
-                connection.Open();
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader["email"] != DBNull.Value)
-                        {
-                            if (email == reader["email"].ToString())
-                            {
-                                System.Diagnostics.Debug.WriteLine("Email already exist");
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }//try
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                throw new Exception(ex.ToString());
+                return 1;
             }
-            finally
+            else
             {
-                connection.Close();
+                score = 1;
             }
-            return false;
+            // score 2 weak
+            if (Regex.IsMatch(password, "[a-z]"))
+            {
+                System.Diagnostics.Debug.WriteLine("--- small letters : true ---");
+                score++;
+            }
+            // score 3 medium
+            if (Regex.IsMatch(password, "[A-Z]"))
+            {
+                System.Diagnostics.Debug.WriteLine("--- Capital letters : true ---");
+
+                score++;
+            }
+            // score 4 strong
+            if (Regex.IsMatch(password, "[0-9]"))
+            {
+                System.Diagnostics.Debug.WriteLine("--- Numbers : true ---");
+
+                score++;
+            }
+            // score 5 excellent
+            if (Regex.IsMatch(password, "(?=.*[^A-Za-z0-9])"))
+            {
+                System.Diagnostics.Debug.WriteLine("--- Special characters : true ---");
+
+                score++;
+            }
+
+            return score;
         }
+
+
     }
 }

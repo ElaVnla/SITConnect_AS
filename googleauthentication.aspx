@@ -36,35 +36,35 @@
                     </div>
                     <div class="col-md-12">
                         <div class="col-md-4">
-                            <asp:Image ID="imgQrCode" runat="server" Style="height: 300px; width: 300px;" />
+                            <asp:Image ID="qrcodeimage" runat="server" Style="height: 300px; width: 300px;" />
                         </div>
                         <div class="col-md-6">
                             <div>
                                 <span style="font-weight: bold; font-size: 14px;">Account Name:</span>
                             </div>
                             <div>
-                                <asp:Label runat="server" ID="lblAccountName"></asp:Label>
+                                <asp:Label runat="server" ID="accname"></asp:Label>
                             </div>
 
                             <div>
                                 <span style="font-weight: bold; font-size: 14px;">Secret Key:</span>
                             </div>
                             <div>
-                                <asp:Label runat="server" ID="lblManualSetupCode"></asp:Label>
+                                <asp:Label runat="server" ID="mansetupcode"></asp:Label>
                             </div>
                         </div>
                     </div>
                     <div class="clearfix"></div>
                     <div class="col-md-12" style="margin-top: 2%">
                         <div class="form-group col-md-4">
-                            <asp:TextBox runat="server" CssClass="form-control" ID="txtSecurityCode" MaxLength="50" ToolTip="Please enter security code you get on your authenticator application">  
+                            <asp:TextBox runat="server" CssClass="form-control" ID="authsecuritycode" MaxLength="50" ToolTip="Please enter security code you get on your authenticator application">  
                             </asp:TextBox>
                         </div>
-                        <asp:Button ID="btnValidate" OnClick="btnValidate_Click" CssClass="btn btn-primary" runat="server" Text="Validate" />
+                        <asp:Button ID="btnValidate" OnClick="btnsubmitvalidate" CssClass="btn btn-primary" runat="server" Text="Validate" />
                     </div>
                     <h3>Result:</h3>
                     <div class="alert alert-success col-md-12" runat="server" role="alert">
-                        <asp:Label ID="lblResult" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="resultlabel" runat="server" Text=""></asp:Label>
                     </div>
                 </div>
             </div>

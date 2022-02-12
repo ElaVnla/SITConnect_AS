@@ -13,22 +13,34 @@ namespace As200537F
 {
     public partial class ProfilePage : System.Web.UI.Page
     {
+        // declaring variables
+        // for database
         string MYDBConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MYDBConnection"].ConnectionString;
+        // decrypting
         byte[] Key;
         byte[] IV;
+        // for displaying user info
         byte[] creditcard = null;
         string userID = null;
+
+        // void functions
         protected void Page_Load(object sender, EventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("Profile page loading.....");
+
             if (Session["UserID"] != null && Session["AuthToken"] != null && Request.Cookies["AuthToken"] != null)
             {
                 if (!Session["AuthToken"].ToString().Equals(Request.Cookies["AuthToken"].Value))
                 {
+                    System.Diagnostics.Debug.WriteLine("User not found, unable to access page.");
+
                     Page.ClientScript.RegisterClientScriptBlock(typeof(Page), "Alert", "alert('Restricted access. Please login!!')", true);
                     Response.Redirect("Login.aspx", false);
                 }
                 else
                 {
+                    System.Diagnostics.Debug.WriteLine("User found, page access allowed.");
+
                     userID = (string)Session["UserID"];
                     displayUserProfile(userID);
                 }
@@ -39,8 +51,11 @@ namespace As200537F
                 Response.Redirect("Login.aspx", false);
             }
         }
+        // display user profile details
         protected void displayUserProfile(string userid)
         {
+            System.Diagnostics.Debug.WriteLine("Retrieving user details....");
+
             SqlConnection connection = new SqlConnection(MYDBConnectionString);
             string sql = "select * FROM Account WHERE Email=@USERID";
             SqlCommand command = new SqlCommand(sql, connection);
@@ -90,7 +105,7 @@ namespace As200537F
             }//try
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                System.Diagnostics.Debug.WriteLine("error when displaying. Error msg -> " + ex.ToString());
                 Response.Redirect("404.aspx", false);
                 //throw new Exception(ex.ToString());
             }
@@ -98,7 +113,36 @@ namespace As200537F
             {
                 connection.Close();
             }
+            System.Diagnostics.Debug.WriteLine("Display complete");
+
         }
+
+
+        // when user wishes to log out
+        protected void LogoutMe(object sender, EventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("User logging out.....");
+
+            Session.Clear();
+            Session.Abandon();
+            Session.RemoveAll();
+
+            Response.Redirect("Login.aspx", false);
+
+            if (Request.Cookies["ASP.NET_SessionId"] != null)
+            {
+                Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
+                Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddMonths(-20);
+                if (Request.Cookies["AuthToken"] != null)
+                {
+                    Response.Cookies["AuthToken"].Value = string.Empty;
+                    Response.Cookies["AuthToken"].Expires = DateTime.Now.AddMonths(-20);
+                }
+
+            }
+        }
+
+        // string function
         protected string decryptData(byte[] cipherText)
         {
             string plainText = null;
@@ -127,27 +171,6 @@ namespace As200537F
             catch (Exception ex) { throw new Exception(ex.ToString()); }
             finally { }
             return plainText;
-        }
-
-        protected void LogoutMe(object sender, EventArgs e)
-        {
-            Session.Clear();
-            Session.Abandon();
-            Session.RemoveAll();
-
-            Response.Redirect("Login.aspx", false);
-
-            if (Request.Cookies["ASP.NET_SessionId"] != null)
-            {
-                Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
-                Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddMonths(-20);
-                if (Request.Cookies["AuthToken"] != null)
-                {
-                    Response.Cookies["AuthToken"].Value = string.Empty;
-                    Response.Cookies["AuthToken"].Expires = DateTime.Now.AddMonths(-20);
-                }
-
-            }
         }
     }
 }

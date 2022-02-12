@@ -2,7 +2,7 @@
 
 <script>
     function validate() {
-        var str = document.getElementById('<%=txt_ccpassword.ClientID %>').value;
+        var str = document.getElementById('<%=txt_npassword.ClientID %>').value;
 
         if (str.length < 12) {
             document.getElementById("lbl_pwdchecker").innerHTML = "Password Length Must be at least 12 characters";
